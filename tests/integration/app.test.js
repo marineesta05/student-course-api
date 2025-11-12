@@ -34,8 +34,6 @@ describe("Student-Course API integration", () => {
         // Teste que la suppression échoue quand des étudiants sont inscrits au cours
         const courses = await request(app).get("/courses");
         const courseId = courses.body.courses[0].id;
-
-        // Inscrire un étudiant au cours
         const students = await request(app).get("/students");
         const studentId = students.body.students[0].id;
         await request(app).post(`/courses/${courseId}/students/${studentId}`);
@@ -111,25 +109,22 @@ describe("Student-Course API integration", () => {
         expect(res.body.teacher).toBe("Updated Teacher");
     });
 
-    // Tests pour couvrir les lignes manquantes dans studentsController.js
 
     test("POST /students should handle storage errors properly", async () => {
-        // Teste la gestion des erreurs de stockage lors de la création d'étudiant
+       
         const res = await request(app)
             .post("/students")
-            .send({ name: "Eve", email: "alice@example.com" }); // Email dupliqué
+            .send({ name: "Eve", email: "alice@example.com" }); 
         expect(res.statusCode).toBe(400);
         expect(res.body.error).toBeDefined();
     });
 
     test("DELETE /students/:id should handle storage errors for non-existent student", async () => {
-        // Teste la gestion des erreurs de stockage lors de la suppression
         const res = await request(app).delete("/students/9999"); // ID inexistant
         expect(res.statusCode).toBe(404);
         expect(res.body.error).toMatch(/not found/i);
     });
 
-    // Tests pour couvrir les lignes manquantes dans coursesController.js
 
     test("PUT /courses/:id should handle partial updates - title only", async () => {
         // Teste la mise à jour partielle d'un cours (seul le titre)
@@ -158,8 +153,6 @@ describe("Student-Course API integration", () => {
     test("DELETE /courses/:id should succeed when no students enrolled", async () => {
         // Teste que la suppression réussit quand aucun étudiant n'est inscrit
         const courses = await request(app).get("/courses");
-
-        // Trouver un cours sans étudiants
         let courseWithoutStudents;
         for (const course of courses.body.courses) {
             const courseDetails = await request(app).get(
@@ -202,15 +195,12 @@ describe("Student-Course API integration", () => {
 
         const studentId = students.body.students[0].id;
         const courseId = courses.body.courses[0].id;
-
-        // Test enrollment
         const enrollRes = await request(app).post(
             `/courses/${courseId}/students/${studentId}`
         );
         expect([400]).toContain(enrollRes.statusCode);
     });
 
-    // Tests pour la gestion des erreurs
 
     test("PUT /students/:id should not allow duplicate email", async () => {
         // Teste l'unicité de l'email lors de la mise à jour
@@ -237,7 +227,6 @@ describe("Student-Course API integration", () => {
         expect(res.body.error).toMatch(/unique/i);
     });
 
-    // Tests pour les scénarios de pagination et filtrage
 
     test("GET /courses should filter by title and teacher with pagination", async () => {
         // Teste le filtrage et la pagination des cours

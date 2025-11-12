@@ -1,4 +1,4 @@
-const storage = require('../services/storage')
+const storage = require("../services/storage");
 
 /**
  * @swagger
@@ -10,14 +10,14 @@ const storage = require('../services/storage')
  *         description: OK
  */
 exports.listCourses = (req, res) => {
-    let courses = storage.list('courses')
-    const { title, teacher, page = 1, limit = 10 } = req.query
-    if (title) courses = courses.filter((c) => c.title.includes(title))
-    if (teacher) courses = courses.filter((c) => c.teacher.includes(teacher))
-    const start = (page - 1) * limit
-    const paginated = courses.slice(start, start + Number(limit))
-    res.json({ courses: paginated, total: courses.length })
-}
+    let courses = storage.list("courses");
+    const { title, teacher, page = 1, limit = 10 } = req.query;
+    if (title) courses = courses.filter((c) => c.title.includes(title));
+    if (teacher) courses = courses.filter((c) => c.teacher.includes(teacher));
+    const start = (page - 1) * limit;
+    const paginated = courses.slice(start, start + Number(limit));
+    res.json({ courses: paginated, total: courses.length });
+};
 
 /**
  * @swagger
@@ -37,11 +37,11 @@ exports.listCourses = (req, res) => {
  *         description: Non trouvé
  */
 exports.getCourse = (req, res) => {
-    const course = storage.get('courses', req.params.id)
-    if (!course) return res.status(404).json({ error: 'Course not found' })
-    const students = storage.getCourseStudents(req.params.id)
-    return res.json({ course, students })
-}
+    const course = storage.get("courses", req.params.id);
+    if (!course) return res.status(404).json({ error: "Course not found" });
+    const students = storage.getCourseStudents(req.params.id);
+    return res.json({ course, students });
+};
 
 /**
  * @swagger
@@ -69,12 +69,12 @@ exports.getCourse = (req, res) => {
  *         description: Paramètres invalides
  */
 exports.createCourse = (req, res) => {
-    const { title, teacher } = req.body
+    const { title, teacher } = req.body;
     if (!title || !teacher)
-        return res.status(400).json({ error: 'title and teacher required' })
-    const created = storage.create('courses', { title, teacher })
-    return res.status(201).json(created)
-}
+        return res.status(400).json({ error: "title and teacher required" });
+    const created = storage.create("courses", { title, teacher });
+    return res.status(201).json(created);
+};
 
 /**
  * @swagger
@@ -94,26 +94,26 @@ exports.createCourse = (req, res) => {
  *         description: Non trouvé
  */
 exports.deleteCourse = (req, res) => {
-    const result = storage.remove('courses', req.params.id)
+    const result = storage.remove("courses", req.params.id);
     if (result === false)
-        return res.status(404).json({ error: 'Course not found' })
-    if (result.error) return res.status(400).json({ error: result.error })
-    return res.status(204).send()
-}
+        return res.status(404).json({ error: "Course not found" });
+    if (result.error) return res.status(400).json({ error: result.error });
+    return res.status(204).send();
+};
 
 exports.updateCourse = (req, res) => {
-    const course = storage.get('courses', req.params.id)
-    if (!course) return res.status(404).json({ error: 'Course not found' })
-    const { title, teacher } = req.body
+    const course = storage.get("courses", req.params.id);
+    if (!course) return res.status(404).json({ error: "Course not found" });
+    const { title, teacher } = req.body;
     if (
         title &&
         storage
-            .list('courses')
+            .list("courses")
             .find((c) => c.title === title && c.id !== course.id)
     ) {
-        return res.status(400).json({ error: 'Course title must be unique' })
+        return res.status(400).json({ error: "Course title must be unique" });
     }
-    if (title) course.title = title
-    if (teacher) course.teacher = teacher
-    return res.json(course)
-}
+    if (title) course.title = title;
+    if (teacher) course.teacher = teacher;
+    return res.json(course);
+};

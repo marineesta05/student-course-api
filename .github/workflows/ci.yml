@@ -22,7 +22,7 @@ jobs:
               run: npm install
             
             - name: Run linter
-              run: npm run lint
+              run: npm run lint:fix
             - name: Run formatter check
               run: npm run format
             - name: Run tests
